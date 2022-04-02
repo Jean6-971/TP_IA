@@ -173,46 +173,28 @@ left_rotate(avl(G,R,D,_), A_Apres) :-
 
 insert(Elem, nil, avl(nil,Elem,nil,0)).
 insert(Elem, AVL, NEW_AVL) :-
-	writeln('insertion'),
 	AVL = avl(Gauche,Racine,Droite,_Hauteur),
-	writeln('avl'),
 	(Elem = Racine ->
 			% l'�l�ment est d�j� present, pas d'insertion possible
-		writeln('element deja present'),
-		fail,
-		writeln('fin insertion')
+		fail
 	;
 		(Elem @< Racine ->
 			% insertion dans le ss-arbre gauche
-			writeln('gauche'),
 			insert(Elem, Gauche, New_Gauche),
-			writeln('gauche apres'),
 			height(New_Gauche, New_HG),
-			writeln('gauche apres height'),
 			height(Droite, HD),
-			writeln('gauche apres height droite'),
 			H_Int is 1+max(New_HG, HD),
-			writeln('gauche apres height inter'),
 			AVL_INT = avl(New_Gauche, Racine, Droite, H_Int), 
-			writeln('gauche apres avl inter'),
-			right_balance(AVL_INT, NEW_AVL),
-			writeln('gauche apres right balance')
+			right_balance(AVL_INT, NEW_AVL)
 		;
 	    % Elem @> Racine
 			% insertion dans le ss-arbre droite
-			writeln('droite'),
 			insert(Elem, Droite, New_Droite),
-			writeln('droite apres'),
 			height(New_Droite, New_HD),
-			writeln('droite apres height'),
 			height(Gauche, HG),
-			writeln('droite apres height gauche'),
 			H_Int is 1+max(New_HD, HG),
-			writeln('droite apres height inter'),
 			AVL_INT =avl(Gauche, Racine,New_Droite, H_Int),
-			writeln('droite apres avl inter'),
-			left_balance(AVL_INT, NEW_AVL),
-			writeln('droite apres left balance')
+			left_balance(AVL_INT, NEW_AVL)
 		)
 	).
 	
@@ -262,23 +244,15 @@ suppress(Elem, AVL, NEW_AVL) :-
 	% Si l'avl est vide, le pr�dicat �choue
 
 suppress_min(Min, AVL, NEW_AVL) :-
-	writeln('suppress_min'),
 	AVL = avl(Gauche,Racine,Droite, _Hauteur),
-	writeln('avl = '),
 	(Gauche = nil ->
-		writeln('Gauche = nil'),
 		Min = Racine,
-		writeln('Min = Racine'),
-		NEW_AVL = Droite,
-		writeln('NEW_AVL = Droite')
+		NEW_AVL = Droite
 	;
 		% Gauche \= nil
 		suppress_min(Min, Gauche, New_Gauche),
-		writeln('New_Gauche = '),
 		AVL_INT = avl(New_Gauche, Racine, Droite,_),
-		writeln('AVL_INT = '),
-		left_balance(AVL_INT, NEW_AVL),
-		writeln('NEW_AVL = ')
+		left_balance(AVL_INT, NEW_AVL)
 	).
 
 	%-------------------------------------------------------
@@ -306,47 +280,29 @@ suppress_max(Max, AVL, NEW_AVL) :-
 	%----------------------------------------------------------------
 
 left_balance(Avl, New_Avl) :-
-	writeln('left_balance'),
 	Avl = avl(Gauche, Racine, Droite, _Hauteur),
-	writeln('avl = '),
 	height(Gauche, HG),
-	writeln('height gauche = '),
 	height(Droite, HD),
-	writeln('height droite = '),
 	(HG is HD-2 ->
 	% le sous-arbre droite est trop haut 
-		writeln('HG is HD-2'),
 		Droite = avl(G_Droite, _R_Droite, D_Droite, _HD),
-		writeln('Droite = avl(G_Droite, _R_Droite, D_Droite, _HD)'),
 		height(G_Droite, HGD),
-		writeln('height G_Droite = '),
 		height(D_Droite, HDD),
-		writeln('height D_Droite = '),
 		(HDD > HGD ->
 		% une simple rotation gauche suffit
-			writeln('HDD > HGD'),
-			left_rotate(Avl, New_Avl),
-			writeln('left_rotate(Avl, New_Avl)')
+			left_rotate(Avl, New_Avl)
 		;
 		% il faut faire une rotation droite_gauche
-			writeln('HDD < HGD'),
 			right_rotate(Droite, New_Droite),
-			writeln('right_rotate(Droite, New_Droite)'),
 			height(New_Droite, New_HD),
-			writeln('height New_Droite = '),
 			H_Int is 1+ max(HG, New_HD),
-			writeln('H_Int = 1 + max(HG, New_HD)'),
 			Avl_Int = avl(Gauche, Racine, New_Droite, H_Int),
-			writeln('Avl_Int = avl(Gauche, Racine, New_Droite, H_Int)'),
-			left_rotate(Avl_Int, New_Avl),
-			writeln('left_rotate(Avl_Int, New_Avl)')
+			left_rotate(Avl_Int, New_Avl)
 		)
 	;
 	% la suppression n'a pas desequilibre l'avl
 		New_Hauteur is 1+max(HG,HD),
-		writeln('New_Hauteur = 1 + max(HG,HD)'),
-		New_Avl = avl(Gauche, Racine, Droite, New_Hauteur),
-		writeln('New_Avl = avl(Gauche, Racine, Droite, New_Hauteur)')
+		New_Avl = avl(Gauche, Racine, Droite, New_Hauteur)
 	).
 
 	%----------------------------------------
