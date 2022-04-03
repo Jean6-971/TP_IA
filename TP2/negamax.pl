@@ -164,7 +164,7 @@ meilleur_des_deux(A, B, B). */
 main(B, V, Pmax) :-
 	situation_initiale(S),
 	joueur_initial(J),
-	negamax(J, S, 0, Pmax, [B, V]).
+	negamax(J, S, 1, Pmax, [B, V]).
 
 
 	/*
