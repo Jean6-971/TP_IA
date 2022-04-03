@@ -60,11 +60,14 @@ A FAIRE : ECRIRE ici les clauses de negamax/5
 negamax(J, Etat, Pmax, Pmax, [rien, Val]) :-
 	heuristique(J, Etat, Val).
 
-negamax(J, Etat, _, _, [rien, Val]) :-
+negamax(J, Etat, P, Pmax, [rien, Val]) :-
+	P \= Pmax,
 	situation_terminale(J, Etat),
 	heuristique(J, Etat, Val).
 
 negamax(J, Etat, P, Pmax, [C1, V2]) :-
+	P \= Pmax,
+	not(situation_terminale(J, Etat)),
 	successeurs(J, Etat, Succ),
 	loop_negamax(J, P, Pmax, Succ, Couples),
 	once(meilleur(Couples, [C1,V1])),
@@ -133,12 +136,15 @@ A FAIRE : ECRIRE ici les clauses de meilleur/2
 	*/
 
 meilleur([X], X).
-meilleur([[CX,VX]|L],[CX,VX]) :-
-	meilleur(L,[_,VY]),
-	VX is min(VX, VY).
-meilleur([[_,VX]|L],[CY,VY]) :-
-	meilleur(L,[CY,VY]),
-	VY is min(VX, VY).
+meilleur([[C,V]|R], [CO,VO]) :-
+	meilleur(R, [CM,VM]),
+	(VM =< V ->
+		VO = VM,
+		CO = CM
+	;
+		VO = V,
+		CO = C
+	).
 
 /* meilleur([Best], Best).
 
@@ -156,8 +162,9 @@ meilleur_des_deux(A, B, B). */
   	*******************/
 
 main(B, V, Pmax) :-
-	S=[[_, _, _], [_, _, _], [_, _, _]],
-	negamax(x, S, 0, Pmax, [B, V]).
+	situation_initiale(S),
+	joueur_initial(J),
+	negamax(J, S, 0, Pmax, [B, V]).
 
 
 	/*

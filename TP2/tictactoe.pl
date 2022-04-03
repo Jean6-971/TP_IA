@@ -66,8 +66,10 @@ alignement(D, Matrix) :- diagonale(D,Matrix).
 ligne(L, M) :- nth1(_,M,L).
 
 colonne2([],[],_).
-colonne2([H|T],[L|S],N) :- nth1(N,L,H),
+colonne2([H|T],[L|S],N) :-
+	nth1(N,L,H),
 	colonne2(T,S,N).
+
 colonne(C,M):-colonne2(C,M,_).
 
 
@@ -129,6 +131,9 @@ unifiable(X,_) :-
 	var(X),
 	!.
 unifiable(J,J).
+
+%unifiable(X,J) :- 
+%	(var(X) -> true; X=J).
 	
 	/**********************************
 	 DEFINITION D'UN ALIGNEMENT GAGNANT
@@ -188,6 +193,11 @@ successeur(J, Etat,[L,C]) :-
 	nth1(L,Etat,Lig),
 	nth1(C,Lig,J).
 
+%successeur(J, Etat_Suivant,[L,C]) :-
+%	nth1(L,Etat_Suivant,Lig), nth1(C,Lig, NonUnifie),
+%	\+ ground(NonUnifie), % \+ = not
+%	NonUnifie = J.
+
 	/**************************************
    	 EVALUATION HEURISTIQUE D'UNE SITUATION
   	 **************************************/
@@ -218,10 +228,10 @@ heuristique(J,Situation,H) :-		% cas 2
 
 % A FAIRE 					cas 3
 heuristique(J,Situation,H) :-		% cas 3
-	findall(AligJ,(alignement(AligJ,Situation), possible(AligJ,J)),LJ),
-	length(LJ,JP),
 	adversaire(J,V),
-	findall(AligV,(alignement(AligV,Situation), possible(AligV,V)),LV),
+	findall(Alig,(alignement(Alig,Situation), possible(Alig,J)),LJ),
+	length(LJ,JP),
+	findall(Alig,(alignement(Alig,Situation), possible(Alig,V)),LV),
 	length(LV,VP),
 	H is JP - VP.
 
